@@ -2,8 +2,8 @@ ttl: &ttl 30
 loop_wait: &loop_wait 10
 scope: &scope {{ patroni_scope }}
 restapi:
-  listen: 127.0.0.1:8008
-  connect_address: 127.0.0.1:8008
+  listen: 0.0.0.0:8008
+  connect_address: {{ ansible_default_ipv4.address }}:8008
   auth: 'username:{{ patroni_rest_password }}'
 etcd:
   scope: *scope
@@ -11,11 +11,11 @@ etcd:
   host: 127.0.0.1:4001
   #discovery_srv: my-etcd.domain
 postgresql:
-  name: postgresql0
+  name: {{ patroni_node_name }}
   scope: *scope
   listen: 0.0.0.0:5432
-  connect_address: {{ postgresql0_ip }}:5432
-  data_dir: data/postgresql0
+  connect_address: {{ ansible_default_ipv4.address }}:5432
+  data_dir: data/{{ patroni_node_name }}
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
   use_slots: True
   pg_rewind:

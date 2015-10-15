@@ -5,11 +5,8 @@
 - name: create /etc/patroni
   file: state=directory dest=/etc/patroni
 
-- name: put postgres0.yml
-  template: src=postgres0.yml dest=/etc/patroni/postgres0.yml backup=yes
-
-- name: put postgres1.yml
-  template: src=postgres1.yml dest=/etc/patroni/postgres1.yml backup=yes
+- name: put postgres.yml
+  template: src=postgres0.yml dest=/etc/patroni/postgres.yml backup=yes
 
 - name: install python-etcd
   pip: name=python-etcd
@@ -37,3 +34,12 @@
 
 - name: install kazoo
   pip: name=kazoo
+
+- name: put patroni.sh
+  template: src=patroni.sh dest=/var/lib/postgresql/patroni.sh mode=0755
+
+- name: put patroni.rb
+  template: src=patroni.rb dest=/etc/eye/patroni.rb
+
+- name: reload eye
+  command: bash -c "source /usr/local/rvm/scripts/rvm && eye l /etc/eye/apps.eye"
