@@ -1,6 +1,6 @@
 ---
 - name: checkout patroni
-  git: repo=https://github.com/zalando/patroni.git dest=/opt/patroni
+  git: repo=https://github.com/gitinsky/patroni.git dest=/opt/patroni
 
 - name: create /etc/patroni
   file: state=directory dest=/etc/patroni
@@ -36,10 +36,10 @@
   pip: name=kazoo
 
 - name: put patroni.sh
-  template: src=patroni.sh dest=/var/lib/postgresql/patroni.sh mode=0755
+  template: src=patroni.sh dest=/var/lib/postgresql/patroni.sh mode=0755 backup=yes
 
 - name: put patroni.rb
-  template: src=patroni.rb dest=/etc/eye/patroni.rb
+  template: src=patroni.rb dest=/etc/eye/patroni.rb backup=yes
 
 - name: reload eye
   command: bash -c "source /usr/local/rvm/scripts/rvm && eye l /etc/eye/apps.eye"
