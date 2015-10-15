@@ -1,0 +1,53 @@
+ttl: &ttl 30
+loop_wait: &loop_wait 10
+scope: &scope {{ patroni_scope }}
+restapi:
+  listen: 127.0.0.1:8009
+  connect_address: 127.0.0.1:8009
+  auth: 'username:{{ patroni_rest_password }}'
+etcd:
+  scope: *scope
+  ttl: *ttl
+  host: 127.0.0.1:4001
+  #discovery_srv: my-etcd.domain
+postgresql:
+  name: postgresql1
+  scope: *scope
+  listen: 0.0.0.0:5432
+  connect_address: {{ postgresql1_ip }}:5432
+  data_dir: data/postgresql1
+  maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
+  use_slots: True
+  pg_rewind:
+    username: superuser
+    password: {{ patroni_postgres_password }}
+  pg_hba:
+  - host all all 0.0.0.0/0 md5
+  - hostssl all all 0.0.0.0/0 md5
+  replication:
+    username: replicator
+    password: {{ patroni_replicator_password }}
+    network:  136.243.76.0/24
+  superuser:
+    username: superuser
+    password: {{ patroni_postgres_password }}
+  admin:
+    username: admin
+    password: {{ patroni_admin_password }}
+#  wal_e:
+#    env_dir: /home/postgres/etc/wal-e.d/env
+#    threshold_megabytes: 10240
+#    threshold_backup_size_percentage: 30
+  restore: /opt/patroni/patroni/scripts/restore.py
+  #recovery_conf:
+    #restore_command: cp ../wal_archive/%f %p
+  parameters:
+    archive_mode: "on"
+    wal_level: hot_standby
+    archive_command: mkdir -p ../wal_archive && cp %p ../wal_archive/%f
+    max_wal_senders: 10
+    wal_keep_segments: 8
+    archive_timeout: 1800s
+    max_replication_slots: 5
+    hot_standby: "on"
+    wal_log_hints: "on"

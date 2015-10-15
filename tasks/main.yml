@@ -1,0 +1,39 @@
+---
+- name: checkout patroni
+  git: repo=https://github.com/zalando/patroni.git dest=/opt/patroni
+
+- name: create /etc/patroni
+  file: state=directory dest=/etc/patroni
+
+- name: put postgres0.yml
+  template: src=postgres0.yml dest=/etc/patroni/postgres0.yml backup=yes
+
+- name: put postgres1.yml
+  template: src=postgres1.yml dest=/etc/patroni/postgres1.yml backup=yes
+
+- name: install python-etcd
+  pip: name=python-etcd
+
+- name: install dnspython
+  pip: name=dnspython
+
+- name: install boto
+  pip: name=boto
+
+- name: install mock
+  pip: name=mock
+
+- name: install psycopg2
+  pip: name=psycopg2
+
+- name: install PyYAML
+  pip: name=PyYAML
+
+- name: install requests
+  pip: name=requests
+
+- name: install six
+  pip: name=six
+
+- name: install kazoo
+  pip: name=kazoo
