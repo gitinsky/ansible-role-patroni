@@ -1,4 +1,11 @@
 ---
+- name: install EPEL repo
+  yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
+
+- name: install git
+  yum: name=git
+  when: "ansible_os_family == 'RedHat'"
+
 - name: checkout patroni
   git: repo=https://github.com/zalando/patroni.git dest=/opt/patroni
 
@@ -38,6 +45,12 @@
 
 - name: install kazoo
   pip: name=kazoo
+
+- name: install python-dateutil
+  pip: name=python-dateutil
+
+- name: install python-consul
+  pip: name=python-consul
 
 - name: put patroni.sh
   template: src=patroni.sh dest=/var/lib/postgresql/patroni.sh mode=0755 backup=yes
