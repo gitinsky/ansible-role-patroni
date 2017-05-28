@@ -6,14 +6,17 @@
   yum: name=git
   when: "ansible_os_family == 'RedHat'"
 
-- name: checkout patroni
-  git: repo=https://github.com/zalando/patroni.git dest=/opt/patroni
+- name: create /var/lib/pgsql/data
+  file: state=directory dest=/var/lib/pgsql/data owner=postgres group=postgres
 
 - name: create /etc/patroni
   file: state=directory dest=/etc/patroni
 
 - name: put postgres.yml
   template: src=postgres0.yml dest=/etc/patroni/postgres.yml backup=yes
+
+- name: checkout patroni
+  git: repo=https://github.com/zalando/patroni.git dest=/opt/patroni
 
 - name: install pip
   yum: name=python2-pip
