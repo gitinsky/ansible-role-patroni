@@ -1,0 +1,3 @@
+[submodule "tests/roles/postgresql"]
+	path = tests/roles/postgresql
+	url = https://github.com/kofonfor/ansible-role-postgresql.git

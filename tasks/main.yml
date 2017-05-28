@@ -1,12 +1,26 @@
 ---
-- name: checkout patroni
-  git: repo=https://github.com/gitinsky/patroni.git dest=/opt/patroni
+- name: install EPEL repo
+  yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
+
+- name: install git
+  yum: name=git
+  when: "ansible_os_family == 'RedHat'"
+
+- name: create /var/lib/pgsql/data
+  file: state=directory dest=/var/lib/pgsql/data owner=postgres group=postgres
 
 - name: create /etc/patroni
   file: state=directory dest=/etc/patroni
 
 - name: put postgres.yml
   template: src=postgres0.yml dest=/etc/patroni/postgres.yml backup=yes
+
+- name: checkout patroni
+  git: repo=https://github.com/zalando/patroni.git dest=/opt/patroni
+
+- name: install pip
+  yum: name=python2-pip
+  when: "ansible_os_family == 'RedHat'"
 
 - name: install python-etcd
   pip: name=python-etcd
@@ -35,11 +49,31 @@
 - name: install kazoo
   pip: name=kazoo
 
+- name: install python-dateutil
+  pip: name=python-dateutil
+
+- name: install python-consul
+  pip: name=python-consul
+
 - name: put patroni.sh
   template: src=patroni.sh dest=/var/lib/postgresql/patroni.sh mode=0755 backup=yes
+  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '<='))"
 
 - name: put patroni.rb
   template: src=patroni.rb dest=/etc/eye/patroni.rb backup=yes
+  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '<='))"
 
 - name: reload eye
   command: bash -c "source /usr/local/rvm/scripts/rvm && eye l /etc/eye/apps.eye"
+  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '<='))"
+
+- name: disable the default service
+  service: name=postgresql-{{ postgres_version }} state=stopped enabled=no
+
+- name: put a systemctl unit file
+  template: src=patroni.service dest=/etc/systemd/system/patroni.service
+  when: "(ansible_distribution == 'Debian' and ansible_distribution_major_version == '8') or (ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '>'))) or (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7')"
+
+- name: enable and start patroni service
+  service: name="patroni" enabled=yes state=started
+  when: "(ansible_distribution == 'Debian' and ansible_distribution_major_version == '8') or (ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '>'))) or (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7')"

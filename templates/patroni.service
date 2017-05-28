@@ -1,0 +1,13 @@
+[Unit]
+Description=Patroni Service
+
+[Service]
+Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/pgsql-9.6/bin"
+User=postgres
+Group=postgres
+ExecStart=/opt/patroni/patroni.py /etc/patroni/postgres.yml
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
