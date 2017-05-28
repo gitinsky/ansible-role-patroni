@@ -1,0 +1,4 @@
+- hosts: patroni
+  become: yes
+  roles:
+  - role: ansible-role-patroni
