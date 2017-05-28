@@ -48,7 +48,7 @@ bootstrap:
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
   - host replication replicator 127.0.0.1/32 md5
   - host all all 0.0.0.0/0 md5
-  - hostssl all all 0.0.0.0/0 md5
+  #- hostssl all all 0.0.0.0/0 md5
 
   # Additional script to be launched after initial cluster creation (will be passed the connection URL as parameter)
 # post_init: /usr/local/bin/setup_cluster.sh
@@ -64,7 +64,7 @@ bootstrap:
 postgresql:
   listen: 0.0.0.0:5432
   connect_address: {{ ansible_default_ipv4.address }}:5432
-  data_dir: data/{{ patroni_node_name }}
+  data_dir: /var/lib/pgsql/data/{{ patroni_node_name }}
 #  bin_dir:
   pgpass: /tmp/pgpass0
   authentication:
