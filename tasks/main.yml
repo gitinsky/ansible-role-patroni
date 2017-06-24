@@ -49,6 +49,17 @@
 - name: install kazoo
   pip: name=kazoo
 
+- name: install gcc
+  yum: name=gcc
+  when: "ansible_os_family == 'RedHat'"
+
+- name: install python-devel
+  yum: name=python-devel
+  when: "ansible_os_family == 'RedHat'"
+
+- name: install psutil
+  pip: name=psutil
+
 - name: install python-dateutil
   pip: name=python-dateutil
 
