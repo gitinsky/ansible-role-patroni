@@ -79,7 +79,7 @@
   when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '<='))"
 
 - name: disable the default service
-  service: name=postgresql-{{ postgres_version }} state=stopped enabled=no
+  service: name={{ patroni_pg_default_service }} state=stopped enabled=no
 
 - name: put a systemctl unit file
   template: src=patroni.service dest=/etc/systemd/system/patroni.service
