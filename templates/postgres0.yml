@@ -32,6 +32,7 @@ bootstrap:
         hot_standby: "on"
         wal_keep_segments: 8
         max_wal_senders: 5
+        max_connections: {{ patroni_pg_max_connections }}
         max_replication_slots: 5
         wal_log_hints: "on"
         archive_mode: "on"
