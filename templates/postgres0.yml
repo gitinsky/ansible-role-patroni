@@ -65,8 +65,8 @@ bootstrap:
         - createdb
 
 postgresql:
-  listen: 0.0.0.0:5432
-  connect_address: {{ ansible_default_ipv4.address }}:5432
+  listen: 0.0.0.0:{{ patroni_postgres_port }}
+  connect_address: {{ ansible_default_ipv4.address }}:{{ patroni_postgres_port }}
   data_dir: /var/lib/pgsql/data/{{ patroni_node_name }}
 #  bin_dir:
   pgpass: /tmp/pgpass0
