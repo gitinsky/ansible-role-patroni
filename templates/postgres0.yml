@@ -37,7 +37,7 @@ bootstrap:
         wal_log_hints: "on"
         archive_mode: "on"
         archive_timeout: 1800s
-        archive_command: mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f
+        archive_command: {{ patroni_archive_command }}
       recovery_conf:
         restore_command: cp ../wal_archive/%f %p
 
@@ -65,8 +65,8 @@ bootstrap:
         - createdb
 
 postgresql:
-  listen: 0.0.0.0:5432
-  connect_address: {{ ansible_default_ipv4.address }}:5432
+  listen: 0.0.0.0:{{ patroni_postgres_port }}
+  connect_address: {{ ansible_default_ipv4.address }}:{{ patroni_postgres_port }}
   data_dir: /var/lib/pgsql/data/{{ patroni_node_name }}
 #  bin_dir:
   pgpass: /tmp/pgpass0

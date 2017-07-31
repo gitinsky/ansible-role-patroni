@@ -1,3 +1,5 @@
 patroni_pg_default_service: "postgresql-{{ postgres_version }}"
 patroni_pg_path: /usr/pgsql-9.6/bin
 patroni_pg_max_connections: 500
+patroni_postgres_port: 5432
+patroni_archive_command: "mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f"
