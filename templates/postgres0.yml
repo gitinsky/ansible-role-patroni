@@ -4,15 +4,15 @@ name: {{ patroni_node_name }}
 
 restapi:
   listen: 0.0.0.0:8008
-  connect_address: {{ ansible_default_ipv4.address }}:8008
+  connect_address: {{ patroni_ip }}:8008
 #  certfile: /etc/ssl/certs/ssl-cert-snakeoil.pem
 #  keyfile: /etc/ssl/private/ssl-cert-snakeoil.key
   authentication:
-    username: {{ ansible_default_ipv4.address }}
+    username: {{ ansible_host }}
     password: {{ patroni_rest_password }}
 
 etcd:
-  host: 127.0.0.1:2379
+  host: {{ etcd_ip }}:2379
 
 bootstrap:
   # this section will be written into Etcd:/<namespace>/<scope>/config after initializing new cluster
@@ -48,8 +48,9 @@ bootstrap:
 
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
 {% for host in groups[patroni_group_name] %}
-  - host replication replicator {{ hostvars[host]['ansible_default_ipv4']['address'] }}/32 md5
+  - host replication replicator {{ hostvars[host]['patroni_ip'] }}/32 md5
 {% endfor %}
+  - host replication replicator 127.0.0.1/32 md5
   - host all all 0.0.0.0/0 md5
   #- hostssl all all 0.0.0.0/0 md5
 
@@ -66,7 +67,7 @@ bootstrap:
 
 postgresql:
   listen: 0.0.0.0:{{ patroni_postgres_port }}
-  connect_address: {{ ansible_default_ipv4.address }}:{{ patroni_postgres_port }}
+  connect_address: {{ patroni_ip }}:{{ patroni_postgres_port }}
   data_dir: /var/lib/pgsql/data/{{ patroni_node_name }}
 #  bin_dir:
   pgpass: /tmp/pgpass0
