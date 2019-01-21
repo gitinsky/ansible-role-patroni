@@ -1,10 +1,10 @@
 ---
 - name: install EPEL repo
   yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
+  when: "ansible_os_family == 'RedHat'"
 
 - name: install git
-  yum: name=git
-  when: "ansible_os_family == 'RedHat'"
+  package: name=git
 
 - name: create /var/lib/pgsql/data
   file: state=directory dest=/var/lib/pgsql/data owner=postgres group=postgres
@@ -16,11 +16,15 @@
   template: src=postgres0.yml dest=/etc/patroni/postgres.yml backup=yes
 
 - name: checkout patroni
-  git: repo=https://github.com/zalando/patroni.git dest=/opt/patroni
+  git: repo=https://github.com/zalando/patroni.git dest=/opt/patroni version={{ patroni_version }}
 
 - name: install pip
   yum: name=python2-pip
   when: "ansible_os_family == 'RedHat'"
+
+- name: install pip
+  yum: name=python-pip
+  when: "ansible_os_family == 'Debian'"
 
 - name: install python-etcd
   pip: name=python-etcd
@@ -83,8 +87,8 @@
 
 - name: put a systemctl unit file
   template: src=patroni.service dest=/etc/systemd/system/patroni.service
-  when: "(ansible_distribution == 'Debian' and ansible_distribution_major_version == '8') or (ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '>'))) or (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7')"
+  when: "(ansible_distribution == 'Debian' and (ansible_distribution_major_version|version_compare(8, '>='))) or (ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '>'))) or (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7')"
 
 - name: enable and start patroni service
   service: name="patroni" enabled=yes state=started
-  when: "(ansible_distribution == 'Debian' and ansible_distribution_major_version == '8') or (ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '>'))) or (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7')"
+  when: "(ansible_distribution == 'Debian' and (ansible_distribution_major_version|version_compare(8, '>='))) or (ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '>'))) or (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7')"
