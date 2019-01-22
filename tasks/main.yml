@@ -23,7 +23,7 @@
   when: "ansible_os_family == 'RedHat'"
 
 - name: install pip
-  yum: name=python-pip
+  apt: name=python-pip
   when: "ansible_os_family == 'Debian'"
 
 - name: install python-etcd
