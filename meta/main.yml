@@ -1,3 +1,15 @@
 ---
+galaxy_info:
+  author: Alex Chistyakov
+  description: configures Patroni cluster
+  license:
+    - MIT
+  min_ansible_version: 2.6
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 16.04
+        - 18.04
+
 dependencies:
   - { role: postgresql, postgres_service_enabled: no }
