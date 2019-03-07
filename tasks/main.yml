@@ -26,33 +26,6 @@
   apt: name=python-pip
   when: "ansible_os_family == 'Debian'"
 
-- name: install python-etcd
-  pip: name=python-etcd
-
-- name: install dnspython
-  pip: name=dnspython
-
-- name: install boto
-  pip: name=boto
-
-- name: install mock
-  pip: name=mock
-
-- name: install psycopg2
-  pip: name=psycopg2
-
-- name: install PyYAML
-  pip: name=PyYAML
-
-- name: install requests
-  pip: name=requests
-
-- name: install six
-  pip: name=six
-
-- name: install kazoo
-  pip: name=kazoo
-
 - name: install gcc
   yum: name=gcc
   when: "ansible_os_family == 'RedHat'"
@@ -61,14 +34,25 @@
   yum: name=python-devel
   when: "ansible_os_family == 'RedHat'"
 
-- name: install psutil
-  pip: name=psutil
-
-- name: install python-dateutil
-  pip: name=python-dateutil
-
-- name: install python-consul
-  pip: name=python-consul
+- name: install deps
+  pip: name={{ item }}
+  with_items:
+    - python-etcd
+    - dnspython
+    - boto
+    - mock
+    - psycopg2
+    - PyYAML
+    - requests
+    - six
+    - kazoo
+    - psutil
+    - python-dateutil
+    - python-consul
+    - click
+    - cdiff
+    - tzlocal
+    - prettytable
 
 - name: put patroni.sh
   template: src=patroni.sh dest=/var/lib/postgresql/patroni.sh mode=0755 backup=yes
