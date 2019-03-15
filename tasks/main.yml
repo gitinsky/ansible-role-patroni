@@ -56,27 +56,30 @@
 
 - name: put patroni.sh
   template: src=patroni.sh dest=/var/lib/postgresql/patroni.sh mode=0755 backup=yes
-  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '<='))"
+  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version is version_compare(14.04, '<='))"
 
 - name: put patroni.rb
   template: src=patroni.rb dest=/etc/eye/patroni.rb backup=yes
-  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '<='))"
+  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version is version_compare(14.04, '<='))"
 
 - name: reload eye
   command: bash -c "source /usr/local/rvm/scripts/rvm && eye l /etc/eye/apps.eye"
-  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '<='))"
+  when: "ansible_distribution == 'Ubuntu' and (ansible_distribution_version is version_compare(14.04, '<='))"
+
+- name: create {{ patroni_datadir_prefix }}
+  file: dest={{ patroni_datadir_prefix}} state=directory owner=postgres group=postgres mode=0700
 
 - name: disable the default service
   service: name={{ patroni_pg_default_service }} state=stopped enabled=no
 
 - name: put a systemctl unit file
   template: src=patroni.service dest=/etc/systemd/system/patroni.service
-  when: (ansible_distribution == 'Debian' and (ansible_distribution_major_version|version_compare(8, '>='))) or
-        (ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '>'))) or
+  when: (ansible_distribution == 'Debian' and (ansible_distribution_major_version is version_compare(8, '>='))) or
+        (ansible_distribution == 'Ubuntu' and (ansible_distribution_version is version_compare(14.04, '>'))) or
         (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7')
 
 - name: enable and start patroni service
   service: name="patroni" enabled=yes state=started
-  when: (ansible_distribution == 'Debian' and (ansible_distribution_major_version|version_compare(8, '>='))) or
-        (ansible_distribution == 'Ubuntu' and (ansible_distribution_version|version_compare(14.04, '>'))) or
+  when: (ansible_distribution == 'Debian' and (ansible_distribution_major_version is version_compare(8, '>='))) or
+        (ansible_distribution == 'Ubuntu' and (ansible_distribution_version is version_compare(14.04, '>'))) or
         (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7')
