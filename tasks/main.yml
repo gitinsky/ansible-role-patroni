@@ -69,6 +69,10 @@
 - name: create {{ patroni_datadir_prefix }}
   file: dest={{ patroni_datadir_prefix}} state=directory owner=postgres group=postgres mode=0700
 
+- name: put custom config
+  template: src=postgresql_custom.conf dest={{ patroni_custom_conf }} backup=yes
+  when: "patroni_custom_conf is defined"
+
 - name: disable the default service
   service: name={{ patroni_pg_default_service }} state=stopped enabled=no
 

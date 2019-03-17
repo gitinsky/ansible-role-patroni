@@ -68,6 +68,9 @@ bootstrap:
 postgresql:
   listen: 0.0.0.0:{{ patroni_postgres_port }}
   connect_address: {{ patroni_ip }}:{{ patroni_postgres_port }}
+{% if patroni_custom_conf is defined %}
+  custom_conf: {{ patroni_custom_conf }}
+{% endif %}
   data_dir: {{ patroni_datadir_prefix }}/{{ patroni_node_name }}
 #  bin_dir:
   pgpass: /tmp/pgpass0
